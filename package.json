@@ -3,9 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "node Backend/src/server.js",
     "build": "npx prisma generate --schema=Backend/prisma/schema.prisma",
-    "postinstall": "npx prisma generate --schema=Backend/prisma/schema.prisma || true"
+    "start": "npm run build && node Backend/src/server.js"
   },
   "dependencies": {
     "@prisma/client": "^6.16.2",
