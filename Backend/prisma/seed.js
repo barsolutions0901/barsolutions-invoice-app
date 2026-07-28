@@ -59,7 +59,7 @@ async function main() {
           format_tanggal: "DD/MM/YYYY",
           zona_waktu: "Asia/Jakarta",
           bahasa: "id",
-          domain_publik: "https://barsolutions-invoice.vercel.app",
+          domain_publik: "https://barsolutions-invoice-app.vercel.app",
           login_tema: "ikuti_aplikasi",
           login_warna_aksen: "#6366f1",
           login_gaya_latar: "gradasi",

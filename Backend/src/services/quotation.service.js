@@ -293,7 +293,7 @@ async function getPublic(nomor) {
   if (s.stempel_file_id) a.stempel_file_id = s.stempel_file_id;
   if (s.qris_file_id) a.qris_file_id = s.qris_file_id;
 
-  const base = (s.domain_publik || "https://barsolutions-invoice.vercel.app").replace(/\/$/, "");
+  const base = (s.domain_publik || "https://barsolutions-invoice-app.vercel.app").replace(/\/$/, "");
   const link = base + "/?quotation=" + encodeURIComponent(q.Nomor);
 
   return {

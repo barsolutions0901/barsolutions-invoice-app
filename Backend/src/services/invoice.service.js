@@ -204,7 +204,7 @@ async function getPdfData(id) {
   if (s.qris_file_id) a.qris_file_id = s.qris_file_id;
 
   const totalPayment = inv.payments.reduce((sum, p) => sum + Number(p.Jumlah), 0);
-  const base = (s.domain_publik || "https://barsolutions-invoice.vercel.app").replace(/\/$/, "");
+  const base = (s.domain_publik || "https://barsolutions-invoice-app.vercel.app").replace(/\/$/, "");
   const link = base + "/?invoice=" + encodeURIComponent(inv.Nomor);
 
   return {
@@ -255,7 +255,7 @@ async function getPublic(nomor) {
   if (s.stempel_file_id) a.stempel_file_id = s.stempel_file_id;
   if (s.qris_file_id) a.qris_file_id = s.qris_file_id;
 
-  const base = (s.domain_publik || "https://barsolutions-invoice.vercel.app").replace(/\/$/, "");
+  const base = (s.domain_publik || "https://barsolutions-invoice-app.vercel.app").replace(/\/$/, "");
   const link = base + "/?invoice=" + encodeURIComponent(inv.Nomor);
   const totalPayment = inv.payments.reduce((sum, p) => sum + Number(p.Jumlah), 0);
 

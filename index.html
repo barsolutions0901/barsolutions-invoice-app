@@ -777,8 +777,8 @@ table.dataTable{font-size:.875rem;}
         <div class="card p-3 mb-3">
           <h6 class="fw-bold mb-3">Domain & Tautan Publik</h6>
           <div class="row g-2">
-            <div class="col-12"><label class="form-label small">Domain Website Publik</label><input class="form-control" name="domain_publik" placeholder="https://barsolutions-invoice.vercel.app"></div>
-            <small class="text-muted">Kosongkan untuk memakai domain publik bawaan (https://barsolutions-invoice.vercel.app). Tautan akhir: {domain}/?invoice=NOMOR-INVOICE. Dipakai untuk QR Code, Bagikan, Email, dan WhatsApp.</small>
+            <div class="col-12"><label class="form-label small">Domain Website Publik</label><input class="form-control" name="domain_publik" placeholder="https://barsolutions-invoice-app.vercel.app"></div>
+            <small class="text-muted">Kosongkan untuk memakai domain publik bawaan (https://barsolutions-invoice-app.vercel.app). Tautan akhir: {domain}/?invoice=NOMOR-INVOICE. Dipakai untuk QR Code, Bagikan, Email, dan WhatsApp.</small>
           </div>
         </div>
         <div class="card p-3 mb-3" id="cardTemplateManager">
@@ -2768,7 +2768,7 @@ function deleteInvoice(id){
   });
 }
 
-const PUBLIC_INVOICE_BASE_URL = 'https://barsolutions-invoice.vercel.app/';
+const PUBLIC_INVOICE_BASE_URL = 'https://barsolutions-invoice-app.vercel.app/';
 function invoicePublicLink(inv){
   const base = (SETTINGS.domain_publik || PUBLIC_INVOICE_BASE_URL).replace(/\/$/,'');
   return base + '/?invoice=' + encodeURIComponent(inv.Nomor);
