@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "vercel-build": "prisma generate --schema=Backend/prisma/schema.prisma"
+    "start": "node Backend/src/server.js",
+    "build": "npx prisma generate --schema=Backend/prisma/schema.prisma",
+    "postinstall": "npx prisma generate --schema=Backend/prisma/schema.prisma || true"
   },
   "dependencies": {
     "@prisma/client": "^6.16.2",
