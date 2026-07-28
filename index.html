@@ -1700,10 +1700,12 @@ async function loadDashboard(){
   document.getElementById('statPenawaran').textContent = data.totalPenawaran;
   document.getElementById('statPendapatan').textContent = formatCurrency(data.totalPendapatan);
 
-  const [quotationsAll, invoicesAll, paymentsAll] = await Promise.all([
-    api('quotations','list'), api('invoices','list'), api('payments','list')
-  ]);
-  INVOICES_CACHE = invoicesAll; PAYMENTS_CACHE = paymentsAll; QUOTATIONS_CACHE = quotationsAll;
+  const fetches = [];
+  if(!QUOTATIONS_CACHE.length) fetches.push(api('quotations','list').then(r=>QUOTATIONS_CACHE=r));
+  if(!INVOICES_CACHE.length) fetches.push(api('invoices','list').then(r=>INVOICES_CACHE=r));
+  if(!PAYMENTS_CACHE.length) fetches.push(api('payments','list').then(r=>PAYMENTS_CACHE=r));
+  if(fetches.length) await Promise.all(fetches);
+  const [quotationsAll, invoicesAll, paymentsAll] = [QUOTATIONS_CACHE, INVOICES_CACHE, PAYMENTS_CACHE];
   const dikonversi = quotationsAll.filter(q=>q.Status==='Dikonversi').length;
   const belumLunas = invoicesAll.filter(i=>i.Status!=='Lunas').length;
   const lunas = invoicesAll.filter(i=>i.Status==='Lunas').length;
@@ -2257,9 +2259,13 @@ document.getElementById('formProfilSaya').addEventListener('submit', async e=>{
 });
 
 /* ================= PENAWARAN ================= */
-async function loadQuotations(){
-  let [quotations] = await Promise.all([api('quotations','list')]);
-  QUOTATIONS_CACHE = quotations;
+let _quotCacheTime = 0;
+async function loadQuotations(force){
+  if(force || !QUOTATIONS_CACHE.length || Date.now()-_quotCacheTime>5000){
+    QUOTATIONS_CACHE = await api('quotations','list');
+    _quotCacheTime = Date.now();
+  }
+  let quotations = QUOTATIONS_CACHE;
   if(!SERVICES.length) SERVICES = await api('services','list');
   if(!CLIENTS.length) CLIENTS = await api('clients','list');
   if(DT.penawaran) DT.penawaran.destroy();
@@ -2361,12 +2367,12 @@ document.getElementById('formPenawaran').addEventListener('submit', async e=>{
   if(!id) logActivity('Quotation dibuat', formatCurrency(total));
   toast('success','Penawaran tersimpan');
   bootstrap.Modal.getInstance(document.getElementById('modalPenawaran')).hide();
-  loadQuotations();
+  _quotCacheTime = 0; loadQuotations();
 });
 
 function deleteQuotation(id){
   Swal.fire({title:'Hapus penawaran ini?',icon:'warning',showCancelButton:true,confirmButtonText:'Hapus',cancelButtonText:'Batal'}).then(async r=>{
-    if(r.isConfirmed){ await api('quotations','delete',{id}); toast('success','Penawaran dihapus'); loadQuotations(); }
+    if(r.isConfirmed){ await api('quotations','delete',{id}); toast('success','Penawaran dihapus'); _quotCacheTime = 0; loadQuotations(); }
   });
 }
 
@@ -2375,7 +2381,7 @@ function convertQuotation(id){
     if(r.isConfirmed){
       const stamp = userStamp();
       await api('quotations','convert',{id, data:{ConvertedByID: stamp.id, ConvertedByNama: stamp.nama}});
-      toast('success','Invoice berhasil dibuat dari penawaran'); loadQuotations();
+      toast('success','Invoice berhasil dibuat dari penawaran'); _quotCacheTime = 0; loadQuotations();
     }
   });
 }
@@ -2651,8 +2657,12 @@ async function showPublicQuotation(nomor){
 }
 
 /* ================= INVOICE ================= */
-async function loadInvoices(){
-  INVOICES_CACHE = await api('invoices','list');
+let _invoiceCacheTime = 0;
+async function loadInvoices(force){
+  if(force || !INVOICES_CACHE.length || Date.now()-_invoiceCacheTime>5000){
+    INVOICES_CACHE = await api('invoices','list');
+    _invoiceCacheTime = Date.now();
+  }
   if(!SERVICES.length) SERVICES = await api('services','list');
   if(!CLIENTS.length) CLIENTS = await api('clients','list');
   if(DT.invoice) DT.invoice.destroy();
@@ -2769,12 +2779,12 @@ document.getElementById('formInvoice').addEventListener('submit', async e=>{
   logActivity(id ? 'Invoice diedit' : 'Invoice dibuat', 'Total '+formatCurrency(total));
   toast('success','Invoice tersimpan');
   bootstrap.Modal.getInstance(document.getElementById('modalInvoice')).hide();
-  loadInvoices();
+  _invoiceCacheTime = 0; loadInvoices();
 });
 
 function deleteInvoice(id){
   Swal.fire({title:'Hapus invoice ini?',icon:'warning',showCancelButton:true,confirmButtonText:'Hapus',cancelButtonText:'Batal'}).then(async r=>{
-    if(r.isConfirmed){ await api('invoices','delete',{id}); toast('success','Invoice dihapus'); loadInvoices(); }
+    if(r.isConfirmed){ await api('invoices','delete',{id}); toast('success','Invoice dihapus'); _invoiceCacheTime = 0; loadInvoices(); }
   });
 }
 
@@ -3046,9 +3056,13 @@ async function duplicateInvoice(id){
 }
 
 /* ================= PEMBAYARAN ================= */
-async function loadPayments(){
-  let payments = await api('payments','list');
-  PAYMENTS_CACHE = payments;
+let _payCacheTime = 0;
+async function loadPayments(force){
+  if(force || !PAYMENTS_CACHE.length || Date.now()-_payCacheTime>5000){
+    PAYMENTS_CACHE = await api('payments','list');
+    _payCacheTime = Date.now();
+  }
+  let payments = PAYMENTS_CACHE;
   if(!INVOICES_CACHE.length) INVOICES_CACHE = await api('invoices','list');
   if(DT.pembayaran) DT.pembayaran.destroy();
   const banner = document.getElementById('filterBannerPembayaran');
@@ -3095,12 +3109,12 @@ document.getElementById('formPembayaran').addEventListener('submit', async e=>{
   if(!id) logActivity('Pembayaran dicatat', 'Sebesar '+formatCurrency(data.Jumlah));
   toast('success','Pembayaran tersimpan');
   bootstrap.Modal.getInstance(document.getElementById('modalPembayaran')).hide();
-  loadPayments();
+  _payCacheTime = 0; loadPayments();
 });
 
 function deletePayment(id){
   Swal.fire({title:'Hapus pembayaran ini?',icon:'warning',showCancelButton:true,confirmButtonText:'Hapus',cancelButtonText:'Batal'}).then(async r=>{
-    if(r.isConfirmed){ await api('payments','delete',{id}); toast('success','Pembayaran dihapus'); loadPayments(); }
+    if(r.isConfirmed){ await api('payments','delete',{id}); toast('success','Pembayaran dihapus'); _payCacheTime = 0; loadPayments(); }
   });
 }
 
