@@ -5,6 +5,7 @@ const cors = require("cors");
 const path = require("path");
 
 const apiRoutes = require("./routes/api.routes");
+const cronRoutes = require("./routes/cron.routes");
 
 const app = express();
 
@@ -22,5 +23,6 @@ app.get("/api/ping", (req, res) => {
 });
 
 app.use("/api", apiRoutes);
+app.use("/api/cron", cronRoutes);
 
 module.exports = app;
