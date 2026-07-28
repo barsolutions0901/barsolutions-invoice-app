@@ -1,0 +1,17 @@
+{
+  "name": "barsolutions-invoice",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "vercel-build": "npm install && npx prisma generate --schema=Backend/prisma/schema.prisma"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.16.2",
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "prisma": "^6.16.2"
+  }
+}
