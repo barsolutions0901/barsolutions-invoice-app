@@ -1694,28 +1694,31 @@ let REVENUE_PERIOD = '6m';
 let DASH_FILTER = null; // {page, type, value, label} - set by dashboardGo(), consumed by loadInvoices/loadQuotations/loadPayments
 
 async function loadDashboard(){
-  const data = await api('dashboard','get');
-  document.getElementById('statKlien').textContent = data.totalKlien;
-  document.getElementById('statInvoice').textContent = data.totalInvoice;
-  document.getElementById('statPenawaran').textContent = data.totalPenawaran;
-  document.getElementById('statPendapatan').textContent = formatCurrency(data.totalPendapatan);
+  const boot = await api('bootstrap','get');
+  SETTINGS = boot.settings || SETTINGS;
+  INVOICES_CACHE = boot.invoices || [];
+  QUOTATIONS_CACHE = boot.quotations || [];
+  PAYMENTS_CACHE = boot.payments || [];
+  SERVICES = boot.services || [];
+  CLIENTS = boot.clients || [];
+  const data = boot.dashboard || {};
+  const paymentsAll = PAYMENTS_CACHE;
 
-  const fetches = [];
-  if(!QUOTATIONS_CACHE.length) fetches.push(api('quotations','list').then(r=>QUOTATIONS_CACHE=r));
-  if(!INVOICES_CACHE.length) fetches.push(api('invoices','list').then(r=>INVOICES_CACHE=r));
-  if(!PAYMENTS_CACHE.length) fetches.push(api('payments','list').then(r=>PAYMENTS_CACHE=r));
-  if(fetches.length) await Promise.all(fetches);
-  const [quotationsAll, invoicesAll, paymentsAll] = [QUOTATIONS_CACHE, INVOICES_CACHE, PAYMENTS_CACHE];
-  const dikonversi = quotationsAll.filter(q=>q.Status==='Dikonversi').length;
-  const belumLunas = invoicesAll.filter(i=>i.Status!=='Lunas').length;
-  const lunas = invoicesAll.filter(i=>i.Status==='Lunas').length;
-  const totalPiutang = invoicesAll.reduce((a,i)=>a + (i.Status!=='Lunas' ? (Number(i.Sisa)||0) : 0), 0);
+  document.getElementById('statKlien').textContent = data.totalKlien || 0;
+  document.getElementById('statInvoice').textContent = data.totalInvoice || 0;
+  document.getElementById('statPenawaran').textContent = data.totalPenawaran || 0;
+  document.getElementById('statPendapatan').textContent = formatCurrency(data.totalPendapatan || 0);
+
+  const dikonversi = QUOTATIONS_CACHE.filter(q=>q.Status==='Dikonversi').length;
+  const belumLunas = INVOICES_CACHE.filter(i=>i.Status!=='Lunas').length;
+  const lunas = INVOICES_CACHE.filter(i=>i.Status==='Lunas').length;
+  const totalPiutang = INVOICES_CACHE.reduce((a,i)=>a + (i.Status!=='Lunas' ? (Number(i.Sisa)||0) : 0), 0);
   const now = new Date();
   const pendapatanBulanIni = paymentsAll.filter(p=>{
     const d = new Date(p.Tanggal);
     return !isNaN(d) && d.getMonth()===now.getMonth() && d.getFullYear()===now.getFullYear();
   }).reduce((a,p)=>a+(Number(p.Jumlah)||0),0);
-  document.getElementById('statTotalPenawaran').textContent = quotationsAll.length;
+  document.getElementById('statTotalPenawaran').textContent = QUOTATIONS_CACHE.length;
   document.getElementById('statPenawaranDikonversi').textContent = dikonversi;
   document.getElementById('statInvoiceBelumLunas').textContent = belumLunas;
   document.getElementById('statInvoiceLunas').textContent = lunas;
@@ -3814,19 +3817,13 @@ function applySettingsToUi(){
     if(cached && !location.hash){
       SETTINGS = JSON.parse(cached);
       applySettingsToUi();
-      loadAssetPreview('logo');
-      loadAssetPreview('favicon');
-      applyLoginBranding();
-      applyLoginTheme();
     } else {
       SETTINGS = await api('settings','list');
       try{ sessionStorage.setItem('settings_cache', JSON.stringify(SETTINGS)); }catch(e){}
       applySettingsToUi();
-      loadAssetPreview('logo');
-      loadAssetPreview('favicon');
-      applyLoginBranding();
-      applyLoginTheme();
     }
+    applyLoginBranding();
+    applyLoginTheme();
   }catch(e){}
   if(isLoggedIn()){ showApp(); applyRoleUI(); router(); }
   else { showLoginScreen(); }

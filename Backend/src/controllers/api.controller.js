@@ -9,6 +9,7 @@ const settingsService = require("../services/settings.service");
 const fileService = require("../services/file.service");
 const reportService = require("../services/report.service");
 const emailService = require("../services/email.service");
+const bootstrapService = require("../services/bootstrap.service");
 
 const handlers = {
   auth: {
@@ -76,6 +77,9 @@ const handlers = {
   },
   report: {
     get: (body) => reportService.getReport(body.start, body.end),
+  },
+  bootstrap: {
+    get: () => bootstrapService.get(),
   },
 };
 

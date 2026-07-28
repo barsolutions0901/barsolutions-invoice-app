@@ -17,6 +17,10 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../../index.html"));
 });
 
+app.get("/api/ping", (req, res) => {
+  res.json({ ok: true });
+});
+
 app.use("/api", apiRoutes);
 
 module.exports = app;

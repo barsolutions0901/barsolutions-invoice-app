@@ -23,6 +23,10 @@ router.post("/", (req, res, next) => {
     return handleApi(req, res);
   }
 
+  if (resource === "bootstrap" && action === "get") {
+    return handleApi(req, res);
+  }
+
   authMiddleware(req, res, () => handleApi(req, res));
 });
 

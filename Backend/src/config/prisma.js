@@ -1,7 +1,21 @@
 const { PrismaClient } = require("@prisma/client");
 
 const g = globalThis;
-const prisma = g.__prisma || new PrismaClient({ log: ["error"] });
-if (process.env.NODE_ENV !== "production") g.__prisma = prisma;
+let prisma;
 
-module.exports = prisma;
+function getPrisma() {
+  if (!prisma) {
+    prisma = g.__prisma || new PrismaClient({ log: ["error"] });
+    if (process.env.NODE_ENV !== "production") g.__prisma = prisma;
+  }
+  return prisma;
+}
+
+module.exports = new Proxy(
+  {},
+  {
+    get(_, prop) {
+      return getPrisma()[prop];
+    },
+  }
+);
