@@ -1,0 +1,192 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Role {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+
+  users User[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model User {
+  id String @id @default(uuid())
+
+  roleId String
+  role   Role   @relation(fields: [roleId], references: [id])
+
+  Nama         String?
+  Username     String  @unique
+  Email        String  @unique
+  Password     String
+  Jabatan      String?
+  NoHp         String?
+  Foto         String?
+  TandaTangan  String?
+  Role         String  @default("Staf")
+  Status       String  @default("Aktif")
+
+  lastLogin DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Client {
+  id         String   @id @default(uuid())
+  Nama       String
+  Perusahaan String?
+  Email      String?
+  Telepon    String?
+  Alamat     String?
+  NPWP       String?
+  Catatan    String?
+
+  quotations Quotation[]
+  invoices   Invoice[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Service {
+  id          String   @id @default(uuid())
+  NamaLayanan String
+  Kategori    String?
+  Satuan      String?
+  Harga       Float    @default(0)
+  Deskripsi   String?
+  Status      String   @default("Aktif")
+
+  quotationItems QuotationItem[]
+  invoiceItems   InvoiceItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Quotation {
+  id             String         @id @default(uuid())
+  Nomor          String         @unique
+  ClientID       String
+  client         Client         @relation(fields: [ClientID], references: [id])
+  Tanggal        DateTime       @default(now())
+  TanggalBerlaku DateTime?
+  Catatan        String?
+  Subtotal       Float          @default(0)
+  DiskonNilai    Float          @default(0)
+  DiskonPersen   Float          @default(0)
+  DiskonTipe     String         @default("persen")
+  Diskon         Float          @default(0)
+  PajakPersen    Float          @default(0)
+  Pajak          Float          @default(0)
+  Total          Float          @default(0)
+  Status         String         @default("Draft")
+  items          QuotationItem[]
+
+  CreatedByID     String?
+  CreatedByNama   String?
+  CreatedByJabatan String?
+  CreatedByTtd    String?
+  UpdatedByID     String?
+  UpdatedByNama   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model QuotationItem {
+  id          String    @id @default(uuid())
+  QuotationID String
+  quotation   Quotation @relation(fields: [QuotationID], references: [id], onDelete: Cascade)
+  ServiceID   String?
+  service     Service?  @relation(fields: [ServiceID], references: [id])
+  Deskripsi   String
+  Qty         Float     @default(1)
+  Satuan      String?
+  Harga       Float     @default(0)
+  Subtotal    Float     @default(0)
+}
+
+model Invoice {
+  id           String       @id @default(uuid())
+  Nomor        String       @unique
+  ClientID     String
+  client       Client       @relation(fields: [ClientID], references: [id])
+  Tanggal      DateTime     @default(now())
+  JatuhTempo   DateTime?
+  Catatan      String?
+  Subtotal     Float        @default(0)
+  DiskonNilai  Float        @default(0)
+  DiskonPersen Float        @default(0)
+  DiskonTipe   String       @default("persen")
+  Diskon       Float        @default(0)
+  PajakPersen  Float        @default(0)
+  Pajak        Float        @default(0)
+  Total        Float        @default(0)
+  DP           Float        @default(0)
+  Sisa         Float        @default(0)
+  Terbayar     Float        @default(0)
+  Status       String       @default("Belum Dibayar")
+  items        InvoiceItem[]
+  payments     Payment[]
+
+  CreatedByID       String?
+  CreatedByNama     String?
+  CreatedByJabatan  String?
+  CreatedByTtd      String?
+  UpdatedByID       String?
+  UpdatedByNama     String?
+  ConvertedByID     String?
+  ConvertedByNama   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model InvoiceItem {
+  id        String  @id @default(uuid())
+  InvoiceID String
+  invoice   Invoice @relation(fields: [InvoiceID], references: [id], onDelete: Cascade)
+  ServiceID String?
+  service   Service? @relation(fields: [ServiceID], references: [id])
+  Deskripsi String
+  Qty       Float   @default(1)
+  Satuan    String?
+  Harga     Float   @default(0)
+  Subtotal  Float   @default(0)
+}
+
+model Payment {
+  id           String  @id @default(uuid())
+  InvoiceID    String
+  invoice      Invoice @relation(fields: [InvoiceID], references: [id], onDelete: Cascade)
+  NomorInvoice String?
+  Tanggal      DateTime @default(now())
+  Jumlah       Float   @default(0)
+  Metode       String  @default("Transfer Bank")
+  Referensi    String?
+  Catatan      String?
+
+  PaymentByID   String?
+  PaymentByNama String?
+  UpdatedByID   String?
+  UpdatedByNama String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Setting {
+  id   String @id @default(uuid())
+  data Json
+}

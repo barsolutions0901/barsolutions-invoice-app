@@ -1,0 +1,9 @@
+node_modules
+.env
+.env.local
+.env.production
+Backend/generated/
+Backend/.claude/
+Backend/.windsurf/
+*.log
+.DS_Store
