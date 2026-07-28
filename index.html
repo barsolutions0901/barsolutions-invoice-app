@@ -1332,6 +1332,16 @@ function toast(icon, title){
   Toast.fire({icon, title});
 }
 
+let _loadingTimer;
+function showLoading(){
+  if(_loadingTimer) return;
+  _loadingTimer = setTimeout(() => document.getElementById('loadingOverlay').style.display='flex', 200);
+}
+function hideLoading(){
+  if(_loadingTimer){ clearTimeout(_loadingTimer); _loadingTimer = null; }
+  document.getElementById('loadingOverlay').style.display='none';
+}
+
 async function api(resource, action, payload){
   showLoading();
   let res;
@@ -3786,12 +3796,23 @@ function applySettingsToUi(){
   if(publicQuotationNomor){ await showPublicQuotation(publicQuotationNomor); return; }
 
   try{
-    SETTINGS = await api('settings','list');
-    applySettingsToUi();
-    loadAssetPreview('logo');
-    loadAssetPreview('favicon');
-    applyLoginBranding();
-    applyLoginTheme();
+    const cached = sessionStorage.getItem('settings_cache');
+    if(cached && !location.hash){
+      SETTINGS = JSON.parse(cached);
+      applySettingsToUi();
+      loadAssetPreview('logo');
+      loadAssetPreview('favicon');
+      applyLoginBranding();
+      applyLoginTheme();
+    } else {
+      SETTINGS = await api('settings','list');
+      try{ sessionStorage.setItem('settings_cache', JSON.stringify(SETTINGS)); }catch(e){}
+      applySettingsToUi();
+      loadAssetPreview('logo');
+      loadAssetPreview('favicon');
+      applyLoginBranding();
+      applyLoginTheme();
+    }
   }catch(e){}
   if(isLoggedIn()){ showApp(); applyRoleUI(); router(); }
   else { showLoginScreen(); }
