@@ -1321,24 +1321,24 @@ function toast(icon, title){
 
 async function api(resource, action, payload){
   showLoading();
+  let res;
   try{
     const token = getAuthToken();
     const headers = {'Content-Type':'application/json'};
     if(token) headers['Authorization'] = 'Bearer ' + token;
     const ctl = new AbortController();
     const tid = setTimeout(()=>ctl.abort(), 30000);
-    const res = await fetch(getApiUrl(), {
+    res = await fetch(getApiUrl(), {
       method:'POST',
       headers, signal: ctl.signal,
       body: JSON.stringify(Object.assign({resource, action}, payload||{}))
     });
     clearTimeout(tid);
-    if(!res.ok) throw new Error('Gagal terhubung ke server ('+res.status+')');
     const json = await res.json();
     if(!json.success) throw new Error(json.message || 'Terjadi kesalahan');
     return json.data;
   }catch(err){
-    toast('error', err.message);
+    toast('error', err.name==='SyntaxError' ? 'Gagal terhubung ke server ('+res.status+')' : err.message);
     throw err;
   }finally{
     hideLoading();
