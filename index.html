@@ -713,8 +713,8 @@ table.dataTable{font-size:.875rem;}
               </div>
             </div>
           </div>
-          <input type="hidden" name="Foto" id="inpProfilFotoHidden">
-          <input type="hidden" name="TandaTangan" id="inpProfilTtdHidden">
+          <input type="hidden" name="Foto" id="inpFotoProfilHidden">
+          <input type="hidden" name="TandaTangan" id="inpTtdProfilHidden">
           <button type="submit" class="btn btn-primary rounded-3"><i class="bi bi-save"></i> Simpan Perubahan</button>
         </form>
       </div>
@@ -2193,13 +2193,13 @@ function loadProfilSaya(){
 
   const prevFoto = document.getElementById('prevFotoProfil');
   const txtFoto = document.getElementById('txtFotoProfil');
-  document.getElementById('inpProfilFotoHidden').value = u.Foto || '';
+  document.getElementById('inpFotoProfilHidden').value = u.Foto || '';
   if(u.Foto){ prevFoto.src = u.Foto; prevFoto.style.display = 'block'; txtFoto.style.display = 'none'; }
   else { prevFoto.style.display = 'none'; txtFoto.style.display = 'block'; }
 
   const prevTtd = document.getElementById('prevTtdProfil');
   const txtTtd = document.getElementById('txtTtdProfil');
-  document.getElementById('inpProfilTtdHidden').value = u.TandaTangan || '';
+  document.getElementById('inpTtdProfilHidden').value = u.TandaTangan || '';
   if(u.TandaTangan){ prevTtd.src = u.TandaTangan; prevTtd.style.display = 'block'; txtTtd.style.display = 'none'; }
   else { prevTtd.style.display = 'none'; txtTtd.style.display = 'flex'; }
 }
