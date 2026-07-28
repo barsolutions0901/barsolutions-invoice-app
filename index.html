@@ -937,6 +937,19 @@ table.dataTable{font-size:.875rem;}
       </div>
       <div class="col-12">
         <div class="card p-3 mb-3">
+          <h6 class="fw-bold mb-3">Pengiriman Email (SMTP)</h6>
+          <div class="row g-2">
+            <div class="col-md-4"><label class="form-label small">SMTP Host</label><input class="form-control" name="smtp_host" placeholder="smtp.gmail.com"></div>
+            <div class="col-md-2"><label class="form-label small">Port</label><input class="form-control" name="smtp_port" placeholder="587" type="number"></div>
+            <div class="col-md-3"><label class="form-label small">Username</label><input class="form-control" name="smtp_user" placeholder="email@domain.com"></div>
+            <div class="col-md-3"><label class="form-label small">Password</label><input class="form-control" name="smtp_pass" type="password" placeholder="App Password / sandi"></div>
+            <div class="col-md-6"><label class="form-label small">Email Pengirim</label><input class="form-control" name="smtp_from" placeholder="noreply@domain.com"></div>
+            <div class="col-md-6"><label class="form-label small">Nama Pengirim</label><input class="form-control" name="smtp_from_name" placeholder="BarSolutions"></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12">
+        <div class="card p-3 mb-3">
           <h6 class="fw-bold mb-3">Aset Perusahaan</h6>
           <div class="row g-3 row-cols-2 row-cols-md-3 row-cols-lg-5">
             <div class="col upload-box-item">
@@ -3709,14 +3722,10 @@ async function loadAssetPreview(type){
   const fileId = SETTINGS[keyMap[type]];
   const img = document.getElementById('prev'+toPascalCase(type));
   const txt = document.getElementById('txt'+toPascalCase(type));
-  if(fileId){
-    const f = await api('file','get',{fileId});
-    if(f){
-      const src = 'data:'+f.mimeType+';base64,'+f.base64;
-      img.src = src; img.style.display='block'; txt.style.display='none';
-      if(type==='logo'){ document.getElementById('topbarLogo').src = src; document.getElementById('topbarLogo').style.display='block'; setSidebarLogo(src); }
-      if(type==='favicon') document.getElementById('faviconLink').href = src;
-    }
+  if(fileId && fileId.startsWith('data:')){
+    img.src = fileId; img.style.display='block'; txt.style.display='none';
+    if(type==='logo'){ document.getElementById('topbarLogo').src = fileId; document.getElementById('topbarLogo').style.display='block'; setSidebarLogo(fileId); }
+    if(type==='favicon') document.getElementById('faviconLink').href = fileId;
   }
 }
 
@@ -3730,11 +3739,14 @@ function handleAssetUpload(type, input){
     toast('success','File berhasil diunggah');
     const img = document.getElementById('prev'+toPascalCase(type));
     const txt = document.getElementById('txt'+toPascalCase(type));
-    img.src = result.preview; img.style.display='block'; txt.style.display='none';
-    if(type==='logo'){ document.getElementById('topbarLogo').src = result.preview; document.getElementById('topbarLogo').style.display='block'; setSidebarLogo(result.preview); }
-    if(type==='favicon'){ document.getElementById('faviconLink').href = result.preview; }
-    if(type==='logo_login'){ SETTINGS.logo_login_file_id = result.fileId || SETTINGS.logo_login_file_id; applyLoginBranding(); }
-    if(type==='login_bg'){ SETTINGS.login_bg_file_id = result.fileId || SETTINGS.login_bg_file_id; applyLoginTheme(); }
+    const src = result.preview;
+    img.src = src; img.style.display='block'; txt.style.display='none';
+    const _keyMap = {logo:'logo_file_id',favicon:'favicon_file_id',ttd:'ttd_file_id',stempel:'stempel_file_id',qris:'qris_file_id',logo_login:'logo_login_file_id',login_bg:'login_bg_file_id'};
+    if(src && _keyMap[type]){ SETTINGS[_keyMap[type]] = src; }
+    if(type==='logo'){ document.getElementById('topbarLogo').src = src; document.getElementById('topbarLogo').style.display='block'; setSidebarLogo(src); }
+    if(type==='favicon'){ document.getElementById('faviconLink').href = src; }
+    if(type==='logo_login'){ applyLoginBranding(); }
+    if(type==='login_bg'){ applyLoginTheme(); }
   };
   reader.readAsDataURL(file);
 }

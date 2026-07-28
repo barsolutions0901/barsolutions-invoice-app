@@ -8,6 +8,7 @@ const dashboardService = require("../services/dashboard.service");
 const settingsService = require("../services/settings.service");
 const fileService = require("../services/file.service");
 const reportService = require("../services/report.service");
+const emailService = require("../services/email.service");
 
 const handlers = {
   auth: {
@@ -38,9 +39,9 @@ const handlers = {
     convert: (body) => quotationService.convert(body.id, body.data),
     pdfdata: (body) => quotationService.getPdfData(body.id),
     public: (body) => quotationService.getPublic(body.nomor),
-    sendemail: (body) => {
-      console.log("Send email not implemented", body);
-      return { success: true, message: "Email simulation" };
+    sendemail: async (body) => {
+      await emailService.send({ to: body.data?.to, subjek: body.data?.subjek, isi: body.data?.isi });
+      return { success: true, message: "Email terkirim" };
     },
   },
   invoices: {
@@ -51,9 +52,9 @@ const handlers = {
     delete: (body) => invoiceService.remove(body.id),
     pdfdata: (body) => invoiceService.getPdfData(body.id),
     public: (body) => invoiceService.getPublic(body.nomor),
-    sendemail: (body) => {
-      console.log("Send email not implemented", body);
-      return { success: true, message: "Email simulation" };
+    sendemail: async (body) => {
+      await emailService.send({ to: body.data?.to, subjek: body.data?.subjek, isi: body.data?.isi });
+      return { success: true, message: "Email terkirim" };
     },
   },
   payments: {
