@@ -1,7 +1,14 @@
 const prisma = require("../config/prisma");
 const { computeInvoiceStatus } = require("../utils/helpers");
 
+let _cache = null;
+let _cacheTime = 0;
+const CACHE_TTL = 15000;
+
 async function get() {
+  const now = Date.now();
+  if (_cache && now - _cacheTime < CACHE_TTL) return _cache;
+  _cache = null;
   const [setting, clients, services, invoices, quotations, payments] = await Promise.all([
     prisma.setting.findFirst(),
     prisma.client.findMany({ orderBy: { createdAt: "desc" } }),
@@ -76,7 +83,7 @@ async function get() {
     statusInvoice[s] = (statusInvoice[s] || 0) + 1;
   });
 
-  return {
+  const result = {
     settings,
     dashboard: {
       totalKlien: clients.length,
@@ -91,6 +98,9 @@ async function get() {
     clients: clientList,
     services: serviceList,
   };
+  _cache = result;
+  _cacheTime = now;
+  return result;
 }
 
 module.exports = { get };

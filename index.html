@@ -1332,12 +1332,16 @@ function toast(icon, title){
   Toast.fire({icon, title});
 }
 
-let _loadingTimer;
+let _loadingCount = 0;
+let _loadingTimer = null;
 function showLoading(){
+  _loadingCount++;
   if(_loadingTimer) return;
-  _loadingTimer = setTimeout(() => document.getElementById('loadingOverlay').style.display='flex', 200);
+  _loadingTimer = setTimeout(() => document.getElementById('loadingOverlay').style.display='flex', 150);
 }
 function hideLoading(){
+  _loadingCount = Math.max(0, _loadingCount - 1);
+  if(_loadingCount > 0) return;
   if(_loadingTimer){ clearTimeout(_loadingTimer); _loadingTimer = null; }
   document.getElementById('loadingOverlay').style.display='none';
 }
