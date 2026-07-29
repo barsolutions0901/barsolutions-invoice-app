@@ -7,7 +7,6 @@ function getPrisma() {
   if (!prisma) {
     prisma = g.__prisma || new PrismaClient({
       log: ["error"],
-      connectionTimeout: 10000,
     });
     if (process.env.NODE_ENV !== "production") g.__prisma = prisma;
   }
