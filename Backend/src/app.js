@@ -14,10 +14,10 @@ app.use(compression());
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json({ limit: "50mb" }));
 
-app.use(express.static(path.join(__dirname, "../../")));
+app.use(express.static(path.join(__dirname, "../public")));
 
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "../../index.html"));
+  res.sendFile(path.join(__dirname, "../public/index.html"));
 });
 
 app.get("/api/ping", (req, res) => {

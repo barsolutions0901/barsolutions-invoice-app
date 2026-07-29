@@ -6,6 +6,7 @@ COPY package*.json ./
 RUN npm install
 
 COPY prisma ./prisma
+COPY public ./public
 COPY src ./src
 COPY scripts ./scripts
 
