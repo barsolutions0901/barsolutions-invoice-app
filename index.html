@@ -1750,7 +1750,7 @@ async function loadDashboard(){
   });
   apexStatus.render();
 
-  renderInvoicePerhatian(invoicesAll);
+  renderInvoicePerhatian(INVOICES_CACHE);
   renderAktivitas(data.aktivitasTerbaru);
 }
 
@@ -2277,7 +2277,7 @@ document.getElementById('formProfilSaya').addEventListener('submit', async e=>{
 /* ================= PENAWARAN ================= */
 let _quotCacheTime = 0;
 async function loadQuotations(force){
-  if(force || !QUOTATIONS_CACHE.length || Date.now()-_quotCacheTime>5000){
+  if(force || !QUOTATIONS_CACHE.length || Date.now()-_quotCacheTime>60000){
     QUOTATIONS_CACHE = await api('quotations','list');
     _quotCacheTime = Date.now();
   }
@@ -2675,7 +2675,7 @@ async function showPublicQuotation(nomor){
 /* ================= INVOICE ================= */
 let _invoiceCacheTime = 0;
 async function loadInvoices(force){
-  if(force || !INVOICES_CACHE.length || Date.now()-_invoiceCacheTime>5000){
+  if(force || !INVOICES_CACHE.length || Date.now()-_invoiceCacheTime>60000){
     INVOICES_CACHE = await api('invoices','list');
     _invoiceCacheTime = Date.now();
   }

@@ -3,7 +3,7 @@ const { generateNomor } = require("../utils/helpers");
 
 async function list() {
   const items = await prisma.quotation.findMany({
-    include: { client: true, items: true },
+    include: { client: true },
     orderBy: { createdAt: "desc" },
   });
   return items.map((q) => ({
@@ -30,15 +30,6 @@ async function list() {
     CreatedByTtd: q.CreatedByTtd,
     UpdatedByID: q.UpdatedByID,
     UpdatedByNama: q.UpdatedByNama,
-    items: q.items.map((it) => ({
-      ID: it.id,
-      ServiceID: it.ServiceID,
-      Deskripsi: it.Deskripsi,
-      Qty: it.Qty,
-      Satuan: it.Satuan,
-      Harga: it.Harga,
-      Subtotal: it.Subtotal,
-    })),
   }));
 }
 

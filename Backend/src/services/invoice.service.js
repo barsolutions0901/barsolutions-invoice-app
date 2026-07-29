@@ -3,7 +3,7 @@ const { generateNomor, computeInvoiceStatus } = require("../utils/helpers");
 
 async function list() {
   const items = await prisma.invoice.findMany({
-    include: { client: true, items: true, payments: true },
+    include: { client: true, payments: true },
     orderBy: { createdAt: "desc" },
   });
   return items.map((inv) => {
@@ -38,15 +38,6 @@ async function list() {
       UpdatedByNama: inv.UpdatedByNama,
       ConvertedByID: inv.ConvertedByID,
       ConvertedByNama: inv.ConvertedByNama,
-      items: inv.items.map((it) => ({
-        ID: it.id,
-        ServiceID: it.ServiceID,
-        Deskripsi: it.Deskripsi,
-        Qty: it.Qty,
-        Satuan: it.Satuan,
-        Harga: it.Harga,
-        Subtotal: it.Subtotal,
-      })),
     };
   });
 }

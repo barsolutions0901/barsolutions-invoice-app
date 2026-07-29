@@ -13,8 +13,8 @@ async function get() {
     prisma.setting.findFirst(),
     prisma.client.findMany({ orderBy: { createdAt: "desc" } }),
     prisma.service.findMany({ orderBy: { createdAt: "desc" } }),
-    prisma.invoice.findMany({ include: { client: true, items: true, payments: true }, orderBy: { createdAt: "desc" } }),
-    prisma.quotation.findMany({ include: { client: true, items: true }, orderBy: { createdAt: "desc" } }),
+    prisma.invoice.findMany({ include: { client: true, payments: true }, orderBy: { createdAt: "desc" } }),
+    prisma.quotation.findMany({ include: { client: true }, orderBy: { createdAt: "desc" } }),
     prisma.payment.findMany({ orderBy: { createdAt: "desc" } }),
   ]);
 
@@ -35,10 +35,6 @@ async function get() {
       CreatedByJabatan: inv.CreatedByJabatan, CreatedByTtd: inv.CreatedByTtd,
       UpdatedByID: inv.UpdatedByID, UpdatedByNama: inv.UpdatedByNama,
       ConvertedByID: inv.ConvertedByID, ConvertedByNama: inv.ConvertedByNama,
-      items: inv.items.map((it) => ({
-        ID: it.id, ServiceID: it.ServiceID, Deskripsi: it.Deskripsi,
-        Qty: it.Qty, Satuan: it.Satuan, Harga: it.Harga, Subtotal: it.Subtotal,
-      })),
     };
   });
 
@@ -52,10 +48,6 @@ async function get() {
     CreatedByID: q.CreatedByID, CreatedByNama: q.CreatedByNama,
     CreatedByJabatan: q.CreatedByJabatan, CreatedByTtd: q.CreatedByTtd,
     UpdatedByID: q.UpdatedByID, UpdatedByNama: q.UpdatedByNama,
-    items: q.items.map((it) => ({
-      ID: it.id, ServiceID: it.ServiceID, Deskripsi: it.Deskripsi,
-      Qty: it.Qty, Satuan: it.Satuan, Harga: it.Harga, Subtotal: it.Subtotal,
-    })),
   }));
 
   const paymentList = payments.map((p) => ({
