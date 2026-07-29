@@ -4,7 +4,6 @@ const serviceService = require("../services/service.service");
 const quotationService = require("../services/quotation.service");
 const invoiceService = require("../services/invoice.service");
 const paymentService = require("../services/payment.service");
-const dashboardService = require("../services/dashboard.service");
 const settingsService = require("../services/settings.service");
 const fileService = require("../services/file.service");
 const reportService = require("../services/report.service");
@@ -63,9 +62,6 @@ const handlers = {
     create: (body) => paymentService.create(body.data),
     update: (body) => paymentService.update(body.id, body.data),
     delete: (body) => paymentService.remove(body.id),
-  },
-  dashboard: {
-    get: () => dashboardService.get(),
   },
   settings: {
     list: () => settingsService.list(),

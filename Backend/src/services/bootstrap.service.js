@@ -3,7 +3,7 @@ const { computeInvoiceStatus } = require("../utils/helpers");
 
 let _cache = null;
 let _cacheTime = 0;
-const CACHE_TTL = 15000;
+const CACHE_TTL = 60000;
 
 async function get() {
   const now = Date.now();

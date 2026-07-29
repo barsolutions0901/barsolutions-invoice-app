@@ -2,6 +2,7 @@ require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
+const compression = require("compression");
 const path = require("path");
 
 const apiRoutes = require("./routes/api.routes");
@@ -9,6 +10,7 @@ const cronRoutes = require("./routes/cron.routes");
 
 const app = express();
 
+app.use(compression());
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json({ limit: "50mb" }));
 

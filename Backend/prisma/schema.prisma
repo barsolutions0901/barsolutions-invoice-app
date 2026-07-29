@@ -56,6 +56,8 @@ model Client {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([createdAt])
 }
 
 model Service {
@@ -72,6 +74,8 @@ model Service {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([createdAt])
 }
 
 model Quotation {
@@ -102,6 +106,11 @@ model Quotation {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([createdAt])
+  @@index([ClientID])
+  @@index([Status])
+  @@index([Tanggal])
 }
 
 model QuotationItem {
@@ -151,6 +160,12 @@ model Invoice {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([createdAt])
+  @@index([ClientID])
+  @@index([Status])
+  @@index([Tanggal])
+  @@index([JatuhTempo])
 }
 
 model InvoiceItem {
@@ -184,6 +199,11 @@ model Payment {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([InvoiceID])
+  @@index([NomorInvoice])
+  @@index([Tanggal])
+  @@index([createdAt])
 }
 
 model Setting {

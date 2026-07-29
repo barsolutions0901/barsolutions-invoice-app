@@ -1449,24 +1449,23 @@ function showApp(){
   document.querySelector('.main-wrap').style.display = '';
 }
 
-async function applyLoginBranding(){
+function applyLoginBranding(){
   document.getElementById('loginBrandName').textContent = SETTINGS.nama_perusahaan || 'BARSOLUTION';
   const teksSambutan = document.getElementById('loginTeksSambutan');
   if(teksSambutan) teksSambutan.textContent = SETTINGS.login_teks_sambutan || 'Masuk untuk mengelola invoice Anda';
   const fileId = SETTINGS.logo_login_file_id || SETTINGS.logo_file_id;
   if(fileId){
-    try{
-      const f = await api('file','get',{fileId});
+    api('file','get',{fileId}).then(f=>{
       if(f){
         document.getElementById('loginLogo').src = 'data:'+f.mimeType+';base64,'+f.base64;
         document.getElementById('loginLogo').style.display = 'block';
         document.querySelector('#loginScreen .login-icon-box .bi').style.display = 'none';
       }
-    }catch(e){}
+    }).catch(()=>{});
   }
 }
 
-async function applyLoginTheme(){
+function applyLoginTheme(){
   const el = document.getElementById('loginScreen');
   const loginTema = SETTINGS.login_tema || 'ikuti_aplikasi';
   const tema = loginTema === 'ikuti_aplikasi' ? (SETTINGS.tema || 'light') : loginTema;
@@ -1480,10 +1479,9 @@ async function applyLoginTheme(){
   if(gaya === 'polos'){
     el.style.background = warna1;
   } else if(gaya === 'gambar' && SETTINGS.login_bg_file_id){
-    try{
-      const f = await api('file','get',{fileId: SETTINGS.login_bg_file_id});
+    api('file','get',{fileId: SETTINGS.login_bg_file_id}).then(f=>{
       if(f){ el.style.background = `linear-gradient(rgba(0,0,0,.35),rgba(0,0,0,.35)), url(data:${f.mimeType};base64,${f.base64}) center/cover no-repeat`; }
-    }catch(e){ el.style.background = `linear-gradient(135deg, ${warna1} 0%, ${warna2} 100%)`; }
+    }).catch(()=>{ el.style.background = `linear-gradient(135deg, ${warna1} 0%, ${warna2} 100%)`; });
   } else {
     el.style.background = `linear-gradient(135deg, ${warna1} 0%, ${warna2} 100%)`;
   }
@@ -2277,7 +2275,7 @@ document.getElementById('formProfilSaya').addEventListener('submit', async e=>{
 /* ================= PENAWARAN ================= */
 let _quotCacheTime = 0;
 async function loadQuotations(force){
-  if(force || !QUOTATIONS_CACHE.length || Date.now()-_quotCacheTime>60000){
+  if(force || !QUOTATIONS_CACHE.length || Date.now()-_quotCacheTime>300000){
     QUOTATIONS_CACHE = await api('quotations','list');
     _quotCacheTime = Date.now();
   }
@@ -2675,7 +2673,7 @@ async function showPublicQuotation(nomor){
 /* ================= INVOICE ================= */
 let _invoiceCacheTime = 0;
 async function loadInvoices(force){
-  if(force || !INVOICES_CACHE.length || Date.now()-_invoiceCacheTime>60000){
+  if(force || !INVOICES_CACHE.length || Date.now()-_invoiceCacheTime>300000){
     INVOICES_CACHE = await api('invoices','list');
     _invoiceCacheTime = Date.now();
   }

@@ -9,7 +9,7 @@ COPY prisma ./prisma
 COPY src ./src
 COPY scripts ./scripts
 
-RUN npx prisma generate
+RUN npx prisma generate && npx prisma migrate deploy 2>/dev/null || true
 
 EXPOSE 3000
 
