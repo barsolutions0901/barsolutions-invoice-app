@@ -4,14 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BARSOLUTION Invoice</title>
+<meta name="description" content="BarSolution - Aplikasi Manajemen Invoice & Penawaran">
 <link id="faviconLink" rel="icon" href="">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
 <link rel="preconnect" href="https://code.jquery.com">
+<link rel="preconnect" href="https://cdn.datatables.net">
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap">
 <link rel="preload" as="style" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 <link rel="preload" as="style" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<link rel="preload" as="style" href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" media="print" onload="this.media='all'">
@@ -414,7 +417,7 @@ table.dataTable{font-size:.875rem;}
   <div class="login-card text-center">
     <div class="mb-3 d-inline-flex align-items-center justify-content-center login-icon-box">
       <i class="bi bi-receipt-cutoff"></i>
-      <img id="loginLogo" src="" style="display:none;">
+      <img id="loginLogo" src="" alt="Logo" width="200" height="60" style="display:none;">
     </div>
     <h5 class="fw-bold mb-1" id="loginBrandName">BARSOLUTION</h5>
     <div class="text-muted small mb-4" id="loginTeksSambutan">Masuk untuk mengelola invoice Anda</div>
@@ -452,9 +455,9 @@ table.dataTable{font-size:.875rem;}
 
 <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
 <nav class="sidebar" id="sidebar">
-  <div class="brand"><span class="brand-icon-box" id="brandIconBox"><i class="bi bi-receipt-cutoff"></i><img id="sidebarLogo" src="" style="display:none;"></span> <span id="brandName" class="text-truncate">BARSOLUTION</span></div>
+  <div class="brand"><span class="brand-icon-box" id="brandIconBox"><i class="bi bi-receipt-cutoff"></i><img id="sidebarLogo" src="" alt="Logo" width="36" height="36" style="display:none;"></span> <span id="brandName" class="text-truncate">BARSOLUTION</span></div>
   <a class="sidebar-user-box" href="#profilsaya" id="sidebarUserBox">
-    <span class="avatar-upload-box avatar-sm" style="cursor:default;"><img id="sidebarUserFoto" style="display:none;"><i class="bi bi-person-fill" id="sidebarUserIcon"></i></span>
+    <span class="avatar-upload-box avatar-sm" style="cursor:default;"><img id="sidebarUserFoto" alt="Foto" width="32" height="32" style="display:none;"><i class="bi bi-person-fill" id="sidebarUserIcon"></i></span>
     <span class="text-truncate">
       <div class="su-name text-truncate" id="sidebarUserName">Pengguna</div>
       <div class="su-role" id="sidebarUserRole">-</div>
@@ -490,7 +493,7 @@ table.dataTable{font-size:.875rem;}
     <div class="d-flex align-items-center gap-2">
       <button class="btn btn-sm btn-light rounded-circle p-2" id="btnDarkMode" title="Ganti Tema Terang/Gelap"><i class="bi bi-moon-stars"></i></button>
       <button class="btn btn-sm btn-light rounded-circle p-2" id="btnLogout" title="Keluar"><i class="bi bi-box-arrow-right"></i></button>
-      <img id="topbarLogo" src="" style="height:36px;display:none;border-radius:6px;">
+      <img id="topbarLogo" src="" alt="Logo" width="36" height="36" style="height:36px;display:none;border-radius:6px;">
     </div>
   </div>
 
@@ -1253,16 +1256,13 @@ table.dataTable{font-size:.875rem;}
   </div>
 </div></div></div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js" defer></script>
+<script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"></script>
 <script>
-const DEFAULT_API_URL = '/api'; // Ganti dengan URL backend setelah deploy, misal: 'https://barsolutions-api.onrender.com/api'
+const DEFAULT_API_URL = '/api';
 function getApiUrl(){ return localStorage.getItem('api_url') || DEFAULT_API_URL; }
 
 let SETTINGS = {};
@@ -1271,6 +1271,41 @@ let SERVICES = [];
 let INVOICES_CACHE = [];
 let PAYMENTS_CACHE = [];
 let QUOTATIONS_CACHE = [];
+
+let _apexchartsLoaded = false;
+let _qrcodeLoaded = false;
+let _html2pdfLoaded = false;
+
+function loadScript(url) {
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = url;
+    s.onload = resolve;
+    s.onerror = reject;
+    document.body.appendChild(s);
+  });
+}
+
+function ensureApexCharts() {
+  if (typeof ApexCharts !== 'undefined') return Promise.resolve();
+  if (_apexchartsLoaded) return new Promise(r => { let c = setInterval(() => { if(typeof ApexCharts!=='undefined'){ clearInterval(c); r(); } }, 50); });
+  _apexchartsLoaded = true;
+  return loadScript('https://cdn.jsdelivr.net/npm/apexcharts');
+}
+
+function ensureQRCode() {
+  if (typeof QRCode !== 'undefined') return Promise.resolve();
+  if (_qrcodeLoaded) return new Promise(r => { let c = setInterval(() => { if(typeof QRCode!=='undefined'){ clearInterval(c); r(); } }, 50); });
+  _qrcodeLoaded = true;
+  return loadScript('https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js');
+}
+
+function ensureHtml2pdf() {
+  if (typeof html2pdf !== 'undefined') return Promise.resolve();
+  if (_html2pdfLoaded) return new Promise(r => { let c = setInterval(() => { if(typeof html2pdf!=='undefined'){ clearInterval(c); r(); } }, 50); });
+  _html2pdfLoaded = true;
+  return loadScript('https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js');
+}
 
 /* ================= OWNER TRACKING (Created By / Updated By / Converted By / Payment By) =================
    Menggunakan sistem login yang sudah ada (getCurrentUser()) untuk otomatis mencatat
@@ -1312,8 +1347,8 @@ function appendSignerFooter(text, signer, rawTemplate){
 function renderSignatureBlock(doc, s, a){
   const signer = getDocumentSignerInfo(doc, s, a);
   return `
-        ${a && a.stempel_file_id ? `<img src="${a.stempel_file_id}" style="height:65px;max-width:130px;object-fit:contain;position:relative;z-index:2;">` : ''}
-        ${signer.ttd ? `<img src="${signer.ttd}" style="height:100px;max-width:200px;object-fit:contain;margin-left:-18px;position:relative;z-index:1;">` : ''}
+        ${a && a.stempel_file_id ? `<img src="${a.stempel_file_id}" alt="Stempel" width="130" height="65" style="height:65px;max-width:130px;object-fit:contain;position:relative;z-index:2;" loading="lazy" decoding="async">` : ''}
+        ${signer.ttd ? `<img src="${signer.ttd}" alt="Tanda tangan" width="200" height="100" style="height:100px;max-width:200px;object-fit:contain;margin-left:-18px;position:relative;z-index:1;" loading="lazy" decoding="async">` : ''}
         <div class="mt-1">Hormat kami,<br><b>${signer.nama}</b>${signer.jabatan ? `<br><span class="small text-muted">${signer.jabatan}</span>` : ''}</div>`;
 }
 
@@ -1570,7 +1605,7 @@ function buildPublicInvoiceHtml(data){
   return `
     <div class="d-flex justify-content-between align-items-start mb-4">
       <div>
-        ${a.logo_file_id ? `<img src="${a.logo_file_id}" style="height:60px;">` : `<h4>${s.nama_perusahaan||''}</h4>`}
+        ${a.logo_file_id ? `<img src="${a.logo_file_id}" alt="Logo" width="180" height="60" style="height:60px;" loading="lazy" decoding="async">` : `<h4>${s.nama_perusahaan||''}</h4>`}
         <div class="small text-muted mt-2">${s.alamat||''}<br>${s.telepon||''} ${s.email?'| '+s.email:''}<br>${s.npwp?'NPWP: '+s.npwp:''}</div>
       </div>
       <div class="text-end">
@@ -1597,7 +1632,7 @@ function buildPublicInvoiceHtml(data){
       <div class="col-6">
         ${bankListHtml}
         ${ewalletListHtml}
-        ${a.qris_file_id ? `<div class="mt-2"><b>QRIS:</b><br><img src="${a.qris_file_id}" style="height:120px;"></div>` : ''}
+        ${a.qris_file_id ? `<div class="mt-2"><b>QRIS:</b><br><img src="${a.qris_file_id}" alt="QRIS" width="120" height="120" style="height:120px;" loading="lazy" decoding="async"></div>` : ''}
       </div>
       <div class="col-6 text-end">
         ${renderSignatureBlock(inv, s, a)}
@@ -1633,7 +1668,7 @@ async function showPublicInvoice(nomor){
       document.title = (data.settings.nama_perusahaan || 'BARSOLUTION') + ' - Invoice ' + data.invoice.Nomor;
     }
     document.getElementById('publicInvoicePrintArea').innerHTML = buildPublicInvoiceHtml(data);
-    renderQr('qr-public-'+data.invoice.ID, data.link);
+    await renderQr('qr-public-'+data.invoice.ID, data.link);
   }catch(err){
     renderPublicInvoiceError(err.message || 'Invoice tidak ditemukan');
   }
@@ -1736,6 +1771,7 @@ async function loadDashboard(){
   document.getElementById('statTotalPiutang').textContent = formatCurrency(totalPiutang);
   document.getElementById('statPendapatanBulanIni').textContent = formatCurrency(pendapatanBulanIni);
 
+  await ensureApexCharts();
   renderRevenueChart();
 
   if(apexStatus) apexStatus.destroy();
@@ -2422,7 +2458,7 @@ async function buildQuotationHtml(id){
   const html = `
     <div class="d-flex justify-content-between align-items-start mb-4">
       <div>
-        ${a.logo_file_id ? `<img src="${a.logo_file_id}" style="height:60px;">` : `<h4>${s.nama_perusahaan}</h4>`}
+        ${a.logo_file_id ? `<img src="${a.logo_file_id}" alt="Logo" width="180" height="60" style="height:60px;" loading="lazy" decoding="async">` : `<h4>${s.nama_perusahaan}</h4>`}
         <div class="small text-muted mt-2">${s.alamat||''}<br>${s.telepon||''} ${s.email?'| '+s.email:''}<br>${s.npwp?'NPWP: '+s.npwp:''}</div>
       </div>
       <div class="text-end">
@@ -2461,7 +2497,7 @@ async function viewQuotationPdf(id){
   CURRENT_PDF_QUOTATION_ID = id;
   const built = await buildQuotationHtml(id);
   document.getElementById('quotationPrintArea').innerHTML = built.html;
-  renderQr('qr-quotation-'+built.q.ID, built.link);
+  await renderQr('qr-quotation-'+built.q.ID, built.link);
   new bootstrap.Modal('#modalPdfPenawaran').show();
 }
 
@@ -2492,31 +2528,31 @@ function printQuotationA4(id){
   });
 }
 
-function downloadQuotationPdf(id){
+async function downloadQuotationPdf(id){
   id = id || CURRENT_PDF_QUOTATION_ID;
-  buildQuotationHtml(id).then(built=>{
-    const container = document.createElement('div');
-    container.style.cssText = INVOICE_A4_WRAPPER_STYLE + 'position:absolute;left:0;top:0;width:210mm;z-index:-9999;background:#fff;';
-    container.innerHTML = built.html;
-    document.body.appendChild(container);
-    renderQr('qr-quotation-'+built.q.ID, built.link);
-    waitForImagesToLoad(container).then(()=>{
-      const w = Math.max(Math.ceil(container.scrollWidth), 794);
-      const h = Math.max(Math.ceil(container.scrollHeight), 1123);
-      html2pdf().set({
-        filename:(built.q.Nomor||'penawaran')+'.pdf',
-        jsPDF:{unit:'mm', format:'a4', orientation:'portrait'},
-        html2canvas:{scale:2, useCORS:true, allowTaint:true, scrollX:0, scrollY:0, windowWidth:w, windowHeight:h},
-        pagebreak:{mode:['css','legacy']}
-      }).from(container).save().then(()=>{
-        document.body.removeChild(container);
-        toast('success','PDF penawaran berhasil diunduh');
-      }).catch(err=>{
-        document.body.removeChild(container);
-        toast('error','Gagal membuat PDF: '+(err&&err.message?err.message:err));
-      });
-    });
-  });
+  await ensureHtml2pdf();
+  const built = await buildQuotationHtml(id);
+  const container = document.createElement('div');
+  container.style.cssText = INVOICE_A4_WRAPPER_STYLE + 'position:absolute;left:0;top:0;width:210mm;z-index:-9999;background:#fff;';
+  container.innerHTML = built.html;
+  document.body.appendChild(container);
+  await renderQr('qr-quotation-'+built.q.ID, built.link);
+  await waitForImagesToLoad(container);
+  const w = Math.max(Math.ceil(container.scrollWidth), 794);
+  const h = Math.max(Math.ceil(container.scrollHeight), 1123);
+  try {
+    await html2pdf().set({
+      filename:(built.q.Nomor||'penawaran')+'.pdf',
+      jsPDF:{unit:'mm', format:'a4', orientation:'portrait'},
+      html2canvas:{scale:2, useCORS:true, allowTaint:true, scrollX:0, scrollY:0, windowWidth:w, windowHeight:h},
+      pagebreak:{mode:['css','legacy']}
+    }).from(container).save();
+    document.body.removeChild(container);
+    toast('success','PDF penawaran berhasil diunduh');
+  } catch(err) {
+    document.body.removeChild(container);
+    toast('error','Gagal membuat PDF: '+(err&&err.message?err.message:err));
+  }
 }
 
 function sendQuotationEmail(id){
@@ -2619,7 +2655,7 @@ function buildPublicQuotationHtml(data){
   return `
     <div class="d-flex justify-content-between align-items-start mb-4">
       <div>
-        ${a.logo_file_id ? `<img src="${a.logo_file_id}" style="height:60px;">` : `<h4>${s.nama_perusahaan||''}</h4>`}
+        ${a.logo_file_id ? `<img src="${a.logo_file_id}" alt="Logo" width="180" height="60" style="height:60px;" loading="lazy" decoding="async">` : `<h4>${s.nama_perusahaan||''}</h4>`}
         <div class="small text-muted mt-2">${s.alamat||''}<br>${s.telepon||''} ${s.email?'| '+s.email:''}<br>${s.npwp?'NPWP: '+s.npwp:''}</div>
       </div>
       <div class="text-end">
@@ -2664,7 +2700,7 @@ async function showPublicQuotation(nomor){
       document.title = (data.settings.nama_perusahaan || 'BARSOLUTION') + ' - Penawaran ' + data.quotation.Nomor;
     }
     document.getElementById('publicInvoicePrintArea').innerHTML = buildPublicQuotationHtml(data);
-    renderQr('qr-public-quotation-'+data.quotation.ID, data.link);
+    await renderQr('qr-public-quotation-'+data.quotation.ID, data.link);
   }catch(err){
     renderPublicInvoiceError(err.message || 'Penawaran tidak ditemukan');
   }
@@ -2842,7 +2878,7 @@ async function buildInvoiceHtml(id){
   const html = `
     <div class="d-flex justify-content-between align-items-start mb-4">
       <div>
-        ${a.logo_file_id ? `<img src="${a.logo_file_id}" style="height:60px;">` : `<h4>${s.nama_perusahaan}</h4>`}
+        ${a.logo_file_id ? `<img src="${a.logo_file_id}" alt="Logo" width="180" height="60" style="height:60px;" loading="lazy" decoding="async">` : `<h4>${s.nama_perusahaan}</h4>`}
         <div class="small text-muted mt-2">${s.alamat||''}<br>${s.telepon||''} ${s.email?'| '+s.email:''}<br>${s.npwp?'NPWP: '+s.npwp:''}</div>
       </div>
       <div class="text-end">
@@ -2869,7 +2905,7 @@ async function buildInvoiceHtml(id){
       <div class="col-6">
         ${bankListHtml}
         ${ewalletListHtml}
-        ${a.qris_file_id ? `<div class="mt-2"><b>QRIS:</b><br><img src="${a.qris_file_id}" style="height:120px;"></div>` : ''}
+        ${a.qris_file_id ? `<div class="mt-2"><b>QRIS:</b><br><img src="${a.qris_file_id}" alt="QRIS" width="120" height="120" style="height:120px;" loading="lazy" decoding="async"></div>` : ''}
       </div>
       <div class="col-6 text-end">
         ${renderSignatureBlock(inv, s, a)}
@@ -2899,7 +2935,7 @@ async function viewInvoicePdf(id){
   CURRENT_PDF_INVOICE_ID = id;
   const built = await buildInvoiceHtml(id);
   document.getElementById('invoicePrintArea').innerHTML = built.html;
-  renderQr('qr-'+built.inv.ID, built.link);
+  await renderQr('qr-'+built.inv.ID, built.link);
   new bootstrap.Modal('#modalPdf').show();
 }
 
@@ -2917,9 +2953,10 @@ function waitForImagesToLoad(container){
   return Promise.all(promises).then(()=>new Promise(resolve=>setTimeout(resolve, 120)));
 }
 
-function renderQr(containerId, link){
+async function renderQr(containerId, link){
   const el = document.getElementById(containerId);
-  if(!el || typeof QRCode==='undefined') return;
+  if(!el) return;
+  if(typeof QRCode==='undefined') await ensureQRCode();
   el.innerHTML = '';
   new QRCode(el, {text: link, width:110, height:110});
 }
@@ -2951,31 +2988,31 @@ function printInvoiceA4(id){
   });
 }
 
-function downloadInvoicePdf(id){
+async function downloadInvoicePdf(id){
   id = id || CURRENT_PDF_INVOICE_ID;
-  buildInvoiceHtml(id).then(built=>{
-    const container = document.createElement('div');
-    container.style.cssText = INVOICE_A4_WRAPPER_STYLE + 'position:absolute;left:0;top:0;width:210mm;z-index:-9999;background:#fff;';
-    container.innerHTML = built.html;
-    document.body.appendChild(container);
-    renderQr('qr-'+built.inv.ID, built.link);
-    waitForImagesToLoad(container).then(()=>{
-      const w = Math.max(Math.ceil(container.scrollWidth), 794);
-      const h = Math.max(Math.ceil(container.scrollHeight), 1123);
-      html2pdf().set({
-        filename:(built.inv.Nomor||'invoice')+'.pdf',
-        jsPDF:{unit:'mm', format:'a4', orientation:'portrait'},
-        html2canvas:{scale:2, useCORS:true, allowTaint:true, scrollX:0, scrollY:0, windowWidth:w, windowHeight:h},
-        pagebreak:{mode:['css','legacy']}
-      }).from(container).save().then(()=>{
-        document.body.removeChild(container);
-        toast('success','PDF invoice berhasil diunduh');
-      }).catch(err=>{
-        document.body.removeChild(container);
-        toast('error','Gagal membuat PDF: '+(err&&err.message?err.message:err));
-      });
-    });
-  });
+  await ensureHtml2pdf();
+  const built = await buildInvoiceHtml(id);
+  const container = document.createElement('div');
+  container.style.cssText = INVOICE_A4_WRAPPER_STYLE + 'position:absolute;left:0;top:0;width:210mm;z-index:-9999;background:#fff;';
+  container.innerHTML = built.html;
+  document.body.appendChild(container);
+  await renderQr('qr-'+built.inv.ID, built.link);
+  await waitForImagesToLoad(container);
+  const w = Math.max(Math.ceil(container.scrollWidth), 794);
+  const h = Math.max(Math.ceil(container.scrollHeight), 1123);
+  try {
+    await html2pdf().set({
+      filename:(built.inv.Nomor||'invoice')+'.pdf',
+      jsPDF:{unit:'mm', format:'a4', orientation:'portrait'},
+      html2canvas:{scale:2, useCORS:true, allowTaint:true, scrollX:0, scrollY:0, windowWidth:w, windowHeight:h},
+      pagebreak:{mode:['css','legacy']}
+    }).from(container).save();
+    document.body.removeChild(container);
+    toast('success','PDF invoice berhasil diunduh');
+  } catch(err) {
+    document.body.removeChild(container);
+    toast('error','Gagal membuat PDF: '+(err&&err.message?err.message:err));
+  }
 }
 
 function sendInvoiceEmail(id){
@@ -3367,7 +3404,7 @@ function onTplControlChange(kind){
 
 function tplHeaderBlock(cfg, s, logo, docTitleLabel, nomor, tanggalLabel, extraMetaHtml, statusHtml){
   const companyBlock = logo
-    ? `<img src="${logo}" style="height:56px;max-width:180px;object-fit:contain;">`
+    ? `<img src="${logo}" alt="Logo" width="180" height="56" style="height:56px;max-width:180px;object-fit:contain;" loading="lazy" decoding="async">`
     : `<h4 style="color:${cfg.accent}">${s.nama_perusahaan||'Nama Perusahaan'}</h4>`;
   const addressBlock = `<div class="small text-muted mt-2">${s.alamat||'Alamat perusahaan'}<br>${s.telepon||''} ${s.email?'| '+s.email:''}<br>${s.npwp?'NPWP: '+s.npwp:''}</div>`;
   const metaBlock = `
@@ -3408,7 +3445,7 @@ function renderTplDocumentHtml(kind, cfg){
     ? `<div><b>Rekening Bank:</b>${bankRows.map(b=>`<div class="mt-1">${b.nama||''} ${b.nomor||''}${b.atas_nama?' a.n. '+b.atas_nama:''}</div>`).join('')}</div>`
     : `<div class="text-muted">Rekening Bank: BCA 1234567890 a.n. ${s.nama_perusahaan||'Perusahaan'}</div>`);
   const ewalletHtml = (cfg.showBank && ewalletRows.length) ? `<div class="mt-2"><b>E-Wallet:</b>${ewalletRows.map(w=>`<div class="mt-1">${w.provider||''} ${w.nomor||''}</div>`).join('')}</div>` : '';
-  const qrisHtml = !cfg.showQr ? '' : (qris ? `<div class="mt-2"><b>QRIS:</b><br><img src="${qris}" style="height:100px;"></div>` : `<div class="mt-2 text-muted">[QRIS]</div>`);
+  const qrisHtml = !cfg.showQr ? '' : (qris ? `<div class="mt-2"><b>QRIS:</b><br><img src="${qris}" alt="QRIS" width="100" height="100" style="height:100px;" loading="lazy" decoding="async"></div>` : `<div class="mt-2 text-muted">[QRIS]</div>`);
 
   const totalBlock = `
     <div class="text-end mb-4">
@@ -3423,8 +3460,8 @@ function renderTplDocumentHtml(kind, cfg){
     <div class="row">
       <div class="col-6">${bankHtml}${ewalletHtml}${qrisHtml}</div>
       <div class="col-6 text-end">
-        ${stempel ? `<img src="${stempel}" style="height:55px;max-width:110px;object-fit:contain;position:relative;z-index:2;">` : ''}
-        ${ttd ? `<img src="${ttd}" style="height:80px;max-width:170px;object-fit:contain;margin-left:-15px;position:relative;z-index:1;">` : ''}
+        ${stempel ? `<img src="${stempel}" alt="Stempel" width="110" height="55" style="height:55px;max-width:110px;object-fit:contain;position:relative;z-index:2;" loading="lazy" decoding="async">` : ''}
+        ${ttd ? `<img src="${ttd}" alt="Tanda tangan" width="170" height="80" style="height:80px;max-width:170px;object-fit:contain;margin-left:-15px;position:relative;z-index:1;" loading="lazy" decoding="async">` : ''}
         <div class="mt-1">Hormat kami,<br>${s.nama_perusahaan||'Nama Perusahaan'}</div>
       </div>
     </div>`;
@@ -3459,7 +3496,7 @@ function renderTplDocumentHtml(kind, cfg){
     </div>`;
 }
 
-function renderTplPreview(kind){
+async function renderTplPreview(kind){
   const cfg = TPL_STATE[kind];
   const box = document.getElementById('tplPreview-'+kind);
   if(!box) return;
@@ -3469,7 +3506,7 @@ function renderTplPreview(kind){
     const dummy = meta.isQuotation ? TPL_DUMMY.quotation : TPL_DUMMY.invoice;
     const base = (SETTINGS.domain_publik || 'https://contoh-domain.com').replace(/\/$/,'');
     const param = meta.isQuotation ? 'quotation' : 'invoice';
-    renderQr('tpl-qrbox-'+kind, base+'/?'+param+'='+encodeURIComponent(dummy.Nomor));
+    await renderQr('tpl-qrbox-'+kind, base+'/?'+param+'='+encodeURIComponent(dummy.Nomor));
   }
 }
 
