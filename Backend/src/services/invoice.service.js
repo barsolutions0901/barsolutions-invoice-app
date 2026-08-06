@@ -1,5 +1,5 @@
 const prisma = require("../config/prisma");
-const { generateNomor, computeInvoiceStatus } = require("../utils/helpers");
+const { generateNomor, computeInvoiceStatus, sanitizeSettings } = require("../utils/helpers");
 
 async function list() {
   const items = await prisma.invoice.findMany({
@@ -225,7 +225,7 @@ async function getPdfData(id) {
         Deskripsi: it.Deskripsi, Qty: it.Qty, Satuan: it.Satuan, Harga: it.Harga, Subtotal: it.Subtotal,
       })),
     },
-    settings: s,
+    settings: sanitizeSettings(s),
     assets: a,
     link,
   };
@@ -277,7 +277,7 @@ async function getPublic(nomor) {
         Deskripsi: it.Deskripsi, Qty: it.Qty, Satuan: it.Satuan, Harga: it.Harga, Subtotal: it.Subtotal,
       })),
     },
-    settings: s,
+    settings: sanitizeSettings(s),
     assets: a,
     link,
     payments: inv.payments.map((p) => ({

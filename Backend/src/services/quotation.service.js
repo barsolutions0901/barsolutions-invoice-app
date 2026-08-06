@@ -1,5 +1,5 @@
 const prisma = require("../config/prisma");
-const { generateNomor } = require("../utils/helpers");
+const { generateNomor, sanitizeSettings } = require("../utils/helpers");
 
 async function list() {
   const items = await prisma.quotation.findMany({
@@ -264,7 +264,7 @@ async function getPdfData(id) {
         Deskripsi: it.Deskripsi, Qty: it.Qty, Satuan: it.Satuan, Harga: it.Harga, Subtotal: it.Subtotal,
       })),
     },
-    settings: s,
+    settings: sanitizeSettings(s),
     assets: a,
   };
 }
@@ -311,7 +311,7 @@ async function getPublic(nomor) {
         Deskripsi: it.Deskripsi, Qty: it.Qty, Satuan: it.Satuan, Harga: it.Harga, Subtotal: it.Subtotal,
       })),
     },
-    settings: s,
+    settings: sanitizeSettings(s),
     assets: a,
     link,
   };

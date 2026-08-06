@@ -1,8 +1,13 @@
 const express = require("express");
 const authMiddleware = require("../middleware/auth.middleware");
 const { handleApi } = require("../controllers/api.controller");
+const fileService = require("../services/file.service");
 
 const router = express.Router();
+
+router.get("/file/:key", (req, res) => {
+  fileService.sendFile(req.params.key, res);
+});
 
 router.post("/", (req, res, next) => {
   const { resource, action } = req.body;

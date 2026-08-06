@@ -35,4 +35,20 @@ function computeInvoiceStatus(invoice) {
   return "Belum Dibayar";
 }
 
-module.exports = { generateNomor, computeInvoiceStatus };
+const ASSET_SETTING_KEYS = [
+  "logo_file_id",
+  "favicon_file_id",
+  "ttd_file_id",
+  "stempel_file_id",
+  "qris_file_id",
+  "logo_login_file_id",
+  "login_bg_file_id",
+];
+
+function sanitizeSettings(data) {
+  const out = { ...(data || {}) };
+  ASSET_SETTING_KEYS.forEach((k) => delete out[k]);
+  return out;
+}
+
+module.exports = { generateNomor, computeInvoiceStatus, sanitizeSettings, ASSET_SETTING_KEYS };

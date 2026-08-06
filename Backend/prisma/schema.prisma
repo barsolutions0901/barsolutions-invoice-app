@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Role {
@@ -209,4 +210,11 @@ model Payment {
 model Setting {
   id   String @id @default(uuid())
   data Json
+}
+
+model Asset {
+  key       String   @id
+  mimeType  String
+  base64    String
+  updatedAt DateTime @updatedAt
 }

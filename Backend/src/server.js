@@ -13,6 +13,8 @@ try {
 
 const server = app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running on port ${PORT}`);
+  const { run: migrateAssets } = require("../scripts/migrate-assets");
+  migrateAssets().catch((err) => console.error("migrate-assets skipped:", err.message));
 });
 
 server.on("error", (err) => {

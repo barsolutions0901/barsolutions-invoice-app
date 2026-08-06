@@ -31,18 +31,28 @@
 - Modifikasi `downloadInvoicePdf()` / `downloadQuotationPdf()` → async, `await ensureHtml2pdf()` diawal
 - Modifikasi `viewInvoicePdf()`, `viewQuotationPdf()`, `showPublicInvoice()`, `showPublicQuotation()`, `renderTplPreview()` → `await renderQr(...)` (since renderQr now async)
 - Sync `index.html` → `Backend/public/index.html`
+- Fase 1 perf: `defer` pada jQuery/Bootstrap JS/SweetAlert2; Google Fonts turun ke wght 400-800 (buang 300)
+- Fase 1 perf: `Promise.all` untuk services/clients/invoices di `loadInvoices`, `loadQuotations`, `loadPayments`
+- Fase 1 perf: cache `settings.list` (TTL 60s, invalidasi di update/upload); sanitize `settings` (hapus base64 gambar) di `getPublic`/`getPdfData`
+- Fase 2 aset: model `Asset` + migration `add_asset_table`; `scripts/migrate-assets.js` (idempotent, jalan saat startup server) memindah base64 dari `Setting.data` ke tabel Asset
+- Fase 2 aset: `file.service` dukung key name (`getFile`, `sendFile` via GET `/api/file/:key` + Cache-Control), `settings.upload`/`update` normalisasi ke Asset
+- Fase 2 aset: frontend pakai helper `assetUrl()` untuk semua `<img src>` aset; login branding/bg langsung pakai URL (tanpa round-trip `file/get`)
+- Fase 2: `auth.middleware` cache user lookup per id (TTL 30s)
+- Fase 2: PgBouncer AKTIF — `DATABASE_URL` = transaction pooler Supabase (ap-southeast-1, port 6543, `?pgbouncer=true&connection_limit=5`); `directUrl` dipakai `prisma migrate deploy` (port 5432). Wajib set `DIRECT_URL` di semua host.
 
 ### Active
 - (none)
 
 ### Blocked
-- (none)
+- Konsolidasi 4 backend → 1: butuh akses dashboard Railway/Vercel/Render/Koyeb
+- Set env di semua host: `DATABASE_URL` (pooler), `DIRECT_URL` (direct 5432), `JWT_SECRET` sama
 
 ## Next Move
-1. Commit & push
-2. `railway up` dari `Backend/`
-3. Login ulang (JWT_SECRET berubah)
-4. Tes akses dan cek PageSpeed score
+1. Review & commit & push
+2. `railway up` dari `Backend/` (migration `add_asset_table` + `migrate-assets` otomatis saat start)
+3. Deploy ulang frontend ke Vercel
+4. Login ulang (JWT_SECRET berubah)
+5. Tes akses, cek DevTools Network (payload settings harus kecil), lalu PageSpeed
 
 ## Relevant Files
 - `index.html` (root): Frontend SPA utama — semua modifikasi PageSpeed dilakukan di sini
